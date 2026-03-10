@@ -5,6 +5,8 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
+import core.Launcher;
+
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JScrollPane;
@@ -33,8 +35,11 @@ public class DMScreen extends ChatScreen {
         JTextField textField = new JTextField("", 100);
         textField.setBounds(400, 300, 150, 45);
 
+        JButton backButton = new JButton("Back");
+        backButton.setBounds(20, 300, 80, 45);
         JButton button = new JButton("Send");
         button.setBounds(550, 300, 80, 45);
+        this.add(backButton);
         this.add(button);
         this.add(textField);
         JLabel MessagesLabel = new JLabel("Messages with " + this.getTitle().split("->")[1] + ":");
@@ -61,6 +66,11 @@ public class DMScreen extends ChatScreen {
                 ref.push().setValueAsync(newMsg);
                 textField.setText("");
             }
+        });
+        backButton.addActionListener(e -> {
+            ChatScreen chatScreen = new ChatScreen("Chatter: " + this.getUser().getUsername()+ " -> All Users");
+            chatScreen.setUser(this.getUser());
+            Launcher.setScreen(chatScreen);
         });
             
     } 

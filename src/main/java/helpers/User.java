@@ -2,12 +2,12 @@ package helpers;
 public class User {
     private String username;
     //private String email;
-    //private String password;
+    private String password;
 
-    public User(String username) {
+    public User(String username, String password) {
         this.username = username;
-        //this.email = email;
-        //this.password = password;
+       
+        this.password = password;
     }
 
     public String getUsername() {
@@ -18,7 +18,7 @@ public class User {
     //     return email;
     // }
 
-    // public String getPassword() {
-    //     return password;
-    // }    
+    public String getPassword() {
+        return password;
+    }    
 }
