@@ -1,7 +1,7 @@
 package core;
 
-import javax.swing.JFrame;
 import Screens.*;
+
 public class Launcher {
     private static Screen currentScreen;
     public static void main(String[] args) throws Exception {

@@ -1,24 +1,19 @@
 package Screens;
 
-import java.util.ArrayList;
 
 import javax.swing.JButton;
-import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JTextField;
 
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
 
 import helpers.*;
 import core.*;
 
 public class MenuScreen extends Screen {
 
-    private ArrayList<String> onlineUsers = new ArrayList<>();
+    
     public MenuScreen(String title) {
         super(title);
     }    
@@ -78,48 +73,8 @@ public class MenuScreen extends Screen {
         
         this.add(button);
         
-        //this.setVisible(true);
+      
         
     }
-    // private boolean usernameExists(String username) {
-    //     ArrayList<String> LocalOnlineUsers = new ArrayList<>();
-    //     DatabaseReference onlineUsersRef = FirebaseDatabase.getInstance().getReference("onlineUsers");
-    //     onlineUsersRef.addValueEventListener(new ValueEventListener() {
-    //         @Override
-    //         public void onDataChange(DataSnapshot snapshot) {
-    //             for (DataSnapshot userSnapshot : snapshot.getChildren()) {
-    //                 if(userSnapshot.getKey().equals(username)) {
-    //                     LocalOnlineUsers.add(userSnapshot.getKey());
-    //                 }
-    //             }
-    //         }
-            
-    //         @Override
-    //         public void onCancelled(DatabaseError error) {
-    //             System.out.println("Failed to read online users: " + error.getMessage());
-    //         }
-    //     });
-    //     if(LocalOnlineUsers.size() > 0) {
-    //         return true;
-    //     }
-    //     return false;
-    // }
-    // private ArrayList<String> getOnlineUsers() {
-    //     ArrayList<String> LocalOnlineUsers = new ArrayList<>();
-    //     DatabaseReference onlineUsersRef = FirebaseDatabase.getInstance().getReference("onlineUsers");
-    //     onlineUsersRef.addValueEventListener(new ValueEventListener() {
-    //         @Override
-    //         public void onDataChange(DataSnapshot snapshot) {
-    //             for (DataSnapshot userSnapshot : snapshot.getChildren()) {
-    //                 LocalOnlineUsers.add(userSnapshot.getKey());
-    //             }
-    //         }
-            
-    //         @Override
-    //         public void onCancelled(DatabaseError error) {
-    //             System.out.println("Failed to read online users: " + error.getMessage());
-    //         }
-    //     });
-    //     return LocalOnlineUsers;
-    // }
+    
 }

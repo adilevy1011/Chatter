@@ -4,18 +4,15 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
 
 import javax.swing.JButton;
-import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
-import java.util.function.Consumer;
 
-import core.*;
 import helpers.*;
+
 public class DMScreen extends ChatScreen {
     private DatabaseReference ref;
     public DMScreen(String title, String user1, String user2)  {
