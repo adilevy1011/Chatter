@@ -3,17 +3,38 @@ package core;
 import javax.swing.JFrame;
 import Screens.*;
 public class Launcher {
-    private static JFrame currentScreen = new MenuScreen("Chatter-Menu");
+    private static Screen currentScreen;
     public static void main(String[] args) throws Exception {
-        setScreen(currentScreen);
+        FireBaseInit.init();
+
+        setScreen(new MenuScreen("Chatter-Menu"));
     }
-    public static void setScreen(JFrame frame) {
-        
-        currentScreen = frame;
+
+    public static void setCurrentScreen(Screen screen) {
+        currentScreen = screen;
+    }
+    public static void setScreen(Screen newScreen) {
+
+        Screen current = getCurrentScreen();
+
+        if (current != null) {
+            current.setVisible(false);
+            current.dispose();
+        }
+
+        setCurrentScreen(newScreen);
+
+        try {
+            newScreen.initFirebase();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        newScreen.setVisible(true);
     }
     
     
-    public static JFrame getCurrentScreen() {
+    public static Screen getCurrentScreen() {
         return currentScreen;
     }
 }
