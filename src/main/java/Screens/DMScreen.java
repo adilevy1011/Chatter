@@ -13,13 +13,11 @@ import javax.swing.JTextField;
 
 import core.*;
 import helpers.*;
-public class DMScreen extends JFrame {
+public class DMScreen extends Screen {
     private User user;
     public DMScreen(String title) {
         super(title);
-        this.setSize(650,400);
-        this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        this.setLayout(null); 
+        
         
     }
     public void initFirebase() throws Exception {

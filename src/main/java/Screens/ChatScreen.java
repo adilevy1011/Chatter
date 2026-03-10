@@ -15,15 +15,10 @@ import javax.swing.JTextField;
 
 import helpers.*;
 import core.*;
-public class ChatScreen extends JFrame{
+public class ChatScreen extends Screen{
     private User user;
     public ChatScreen(String title)  {
         super(title);
-        this.setSize(650,400);
-        this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        this.setLayout(null); 
-        
-        
     }
     public void initFirebase() throws Exception{
         JTextField textField = new JTextField("", 100);

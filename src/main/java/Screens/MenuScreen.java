@@ -8,19 +8,10 @@ import javax.swing.JTextField;
 import helpers.*;
 import core.*;
 
-public class MenuScreen extends JFrame {
+public class MenuScreen extends Screen {
 
     public MenuScreen(String title) {
         super(title);
-        this.setSize(650,400);
-        this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        this.setLayout(null); 
-
-        try {
-            initFirebase();
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
     }    
     public void initFirebase() throws Exception{
         JLabel welcomeLabel = new JLabel("Welcome to Chatter!");
@@ -48,11 +39,6 @@ public class MenuScreen extends JFrame {
 
                 User newUser = new User(usernameField.getText());
                 ChatScreen chatScreen = new ChatScreen("Chatter: " + newUser.getUsername()+ " -> All Users");
-                try {
-                    chatScreen.initFirebase();
-                } catch (Exception ex) {
-                    throw new RuntimeException(ex);
-                }
                 Launcher.getCurrentScreen().setVisible(false);
                 Launcher.getCurrentScreen().dispose();
                 chatScreen.setUser(newUser);
@@ -63,10 +49,12 @@ public class MenuScreen extends JFrame {
         this.add(welcomeLabel);
         this.add(usernameLabel);
         this.add(usernameField);
+
         // this.add(emailLabel);
         // this.add(emailField);
         // this.add(passwordLabel);
         // this.add(passwordField);
+        
         this.add(button);
         
         this.setVisible(true);
