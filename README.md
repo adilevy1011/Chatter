@@ -22,22 +22,6 @@ Chatter is a desktop chat application built with **Java Swing** and **Firebase R
 
 ---
 
-## Screenshots
-
-### Login Screen
-![Login Screen](<img width="788" height="487" alt="image" src="https://github.com/user-attachments/assets/8ec5c549-44cb-4012-a011-15b8d0376839" />
-)
-
-### Main Chat Screen
-![Main Chat Screen](<img width="788" height="487" alt="image" src="https://github.com/user-attachments/assets/7641a31e-be73-4efc-9404-0a8310d7d2fb" />
-)
-
-### Direct Messaging
-![Direct Messaging](<img width="1592" height="485" alt="image" src="https://github.com/user-attachments/assets/80c40857-9590-4f8c-ac9c-5b31c3a9b9d5" />
-)
-
----
-
 ## Technology Stack
 - **Java 17+**
 - **Swing** (GUI framework)
@@ -77,3 +61,5 @@ java -cp bin core.Launcher
 2. Log in with your username and password.
 3. Send direct messages to a specific user or chat with everyone online.
 4. Online users are automatically tracked and displayed.
+## License
+This project is licensed under the MIT License. See the LICENSE file for details.
