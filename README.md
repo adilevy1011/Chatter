@@ -96,5 +96,6 @@ java -cp bin core.Launcher
 2. Log in with your username and password.
 3. Send direct messages to a specific user or chat with everyone online.
 4. Online users are automatically tracked and displayed.
+---
 ## License
 This project is licensed under the MIT License. See the LICENSE file for details.
