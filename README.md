@@ -74,7 +74,8 @@ java -cp bin core.Launcher
 ```
 **Important**: The Java client will only work if the server is running and SERVER_URL in ServerAPI.java points to the correct IP and port of the machine running the server.
 - You **don’t have to hardcode `127.0.0.1`** anywhere — the client uses the `SERVER_URL` variable.  
-- Users must adjust `SERVER_URL` if the server is on a different machine or IP.  
+- Users must adjust `SERVER_URL` if the server is on a different machine or IP.
+---
 ## Server API Endpoints
 | Endpoint             | Method | Description                                                |
 | -------------------- | ------ | ---------------------------------------------------------- |
@@ -89,6 +90,7 @@ java -cp bin core.Launcher
 | `/login`             | POST   | Logs in an existing user or creates a new one if not found |
 | `/onlineUsers`       | GET    | Retrieves a list of all online users                       |
 
+---
 ## Usage 
 1. Launch the application.
 2. Log in with your username and password.
