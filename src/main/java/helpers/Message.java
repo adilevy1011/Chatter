@@ -3,7 +3,7 @@ package helpers;
 public class Message {
     public String username;
     public String text;
-    public long timestamp;
+    public double timestamp;
 
 
     public Message(String username, String text) {

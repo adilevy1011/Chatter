@@ -1,9 +1,4 @@
 package Screens;
-import com.google.firebase.database.ChildEventListener;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
 
 import core.Launcher;
 
@@ -13,13 +8,16 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 
+import javax.swing.Timer;
+ 
+
 import helpers.*;
 
 public class DMScreen extends ChatScreen {
-    private DatabaseReference ref;
+    //private DatabaseReference ref;
     public DMScreen(String title, String user1, String user2)  {
         super(title);    
-        ref = FirebaseDatabase.getInstance().getReference("conversations").child(getConversationId(user1, user2));
+        //ref = FirebaseDatabase.getInstance().getReference("conversations").child(getConversationId(user1, user2));
         
     }
 
@@ -45,26 +43,16 @@ public class DMScreen extends ChatScreen {
         JLabel MessagesLabel = new JLabel("Messages with " + this.getTitle().split("->")[1] + ":");
         MessagesLabel.setBounds(30, 0, 200, 20);
         this.add(MessagesLabel);
-
-        ref.addChildEventListener(new ChildEventListener() {
-            public void onChildAdded(DataSnapshot snapshot, String prevChildKey) {    
-                Message newMsg = snapshot.getValue(Message.class);
-                chatArea.append(newMsg.username + ": " + newMsg.text + "\n");
-                chatArea.setCaretPosition(chatArea.getDocument().getLength());
-                revalidate();
-                repaint();
-            }
-            public void onChildChanged(DataSnapshot snapshot, String prevChildKey) {}
-            public void onChildRemoved(DataSnapshot snapshot) {}
-            public void onChildMoved(DataSnapshot snapshot, String prevChildKey) {}
-            public void onCancelled(DatabaseError error) {}
-        });
+        
         button.addActionListener(e -> {
             String text = textField.getText().trim();
             if(!text.isEmpty()) {
-                Message newMsg = new Message(getUser().getUsername(), text);
-                ref.push().setValueAsync(newMsg);
-                textField.setText("");
+                try {
+                     ServerAPI.sendDirectMessage(getUser().getUsername(), this.getTitle().split("->")[1].trim(), text);
+                     textField.setText("");
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                }
             }
         });
         backButton.addActionListener(e -> {
@@ -72,6 +60,14 @@ public class DMScreen extends ChatScreen {
             chatScreen.setUser(this.getUser());
             Launcher.setScreen(chatScreen);
         });
+        Timer messagesTimer = new Timer(1000, e -> {
+            try {
+                ServerAPI.listenForMessages(chatArea, getConversationId(this.getUser().getUsername(), this.getTitle().split("->")[1].trim()));
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+        });
+        messagesTimer.start();
             
     } 
     
