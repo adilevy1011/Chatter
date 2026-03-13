@@ -5,7 +5,7 @@ import Screens.*;
 public class Launcher {
     private static Screen currentScreen;
     public static void main(String[] args) throws Exception {
-        FireBaseInit.init();
+        //FireBaseInit.init();
 
         setScreen(new MenuScreen("Chatter-Menu"));
     }
