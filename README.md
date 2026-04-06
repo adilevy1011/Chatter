@@ -1,6 +1,6 @@
 # Chatter – Real-time Chat Application in Java Swing
 
-[![Java Version](https://img.shields.io/badge/Java-17+-blue)](https://www.oracle.com/java/)
+[![Java Version](https://img.shields.io/badge/Java-25+-blue)](https://www.oracle.com/java/)
 [![License](https://img.shields.io/badge/License-MIT-green)](LICENSE)
 
 Chatter is a desktop chat application built with **Java Swing** and **Firebase Realtime Database**, now with a **Python FastAPI backend**. Users can log in, send direct messages, or chat with all online users in real time, with online/offline tracking managed through the server.
@@ -21,60 +21,108 @@ Chatter is a desktop chat application built with **Java Swing** and **Firebase R
 - File sharing
 - Message notifications
 - Heartbeat system to automatically remove inactive users
-- Deployment to public server for fully cross-device use
+- Public server deployment for internet-wide access
 
 ---
 
 ## Technology Stack
-- **Java 17+**
+- **Java 25**
 - **Swing** (GUI framework)
 - **Firebase Realtime Database** (stores users, messages, conversations)
 - **Python 3 + FastAPI** (backend server)
 - **Gson** (JSON parsing in Java)
+- **Gradle** (build tool)
 
 ---
 
-## Installation / Setup
+## Prerequisites
+- **Java 25** (Temurin recommended)
+- **Python 3.8+**
+- **Gradle 9.4+**
+- **Firebase project** with Realtime Database enabled
+
+---
 
 ### 1. Clone the repository
 ```bash
-git clone https://github.com/adilevy1011/chatter
-cd chatter
+git clone https://github.com/adilevy1011/Chatter
+cd Chatter
 ```
 ### 2. Backend setup (Python FastAPI server)
 1. Install dependencies:
 ```bash
 pip install fastapi uvicorn firebase-admin
 ```
-2. Place your serviceAccountKey.json from Firebase in the server/ folder.
-3. Start the server:
+2. Obtain your Firebase service account key:
+   - Go to Firebase Console > Project Settings > Service Accounts
+   - Generate a new private key (JSON file)
+   - Rename it to `serviceAccountKey.json` and place it in the `server/` folder
+   - **Important**: This file is gitignored and not included in the repository for security
+3. Start the server (accessible on your local network):
 ```bash
 cd server
-python -m uvicorn server:app --reload
+python -m uvicorn server:app --host 0.0.0.0 --port 8000 --reload
 ```
-Note: The server runs on the IP and port configured in ServerAPI.java (default in the code: http://192.168.56.1:8000).
-Make sure to update SERVER_URL in ServerAPI.java if your computer’s IP changes or if you deploy the server to a different machine.
+Note: The server will be accessible at `http://<your-ip>:8000`. The Java client automatically detects the server URL via environment variables or system properties.
 ### 3. Firebase setup
 1. Go to the Firebase Console and create a new project.
-2. Add a new Android app (any package name is fine, e.g., com.example.chatter) to get the google-services.json file.
-3. Place google-services.json in the project root (next to src/ and README.md).
-4. Ensure your Realtime Database rules allow read/write for testing:
-```bash
+2. Enable the Realtime Database.
+3. Set up authentication if needed (though the app handles its own user management).
+4. Configure your Realtime Database rules for security (replace the default open rules):
+```json
 {
   "rules": {
-    ".read": true,
-    ".write": true
+    "users": {
+      ".read": "auth != null",
+      ".write": "auth != null",
+      "$userId": {
+        ".read": "auth != null && auth.uid == $userId",
+        ".write": "auth != null && auth.uid == $userId"
+      }
+    },
+    "messages": {
+      ".read": "auth != null",
+      ".write": "auth != null"
+    },
+    "conversations": {
+      ".read": "auth != null",
+      ".write": "auth != null",
+      "$conversationId": {
+        ".read": "auth != null",
+        ".write": "auth != null"
+      }
+    }
   }
 }
 ```
+Note: The app uses Firebase Admin SDK on the server side, so authentication is handled server-side. Adjust rules based on your security requirements.
 ### 4. Build and run the Java client
+1. Ensure you have Java 25 and Gradle installed.
+2. Build the project:
 ```bash
-javac -d bin src/**/*.java
-java -cp bin core.Launcher
+gradle build
 ```
-**Important**: The Java client will only work if the server is running and SERVER_URL in ServerAPI.java points to the correct IP and port of the machine running the server.
-- You **don’t have to hardcode `127.0.0.1`** anywhere — the client uses the `SERVER_URL` variable.  
-- Users must adjust `SERVER_URL` if the server is on a different machine or IP.
+3. Run the application:
+```bash
+gradle run
+```
+**Configuring the Server URL:**
+The client automatically detects the server URL in this order:
+1. System property: `-Dserver.url=http://<your-ip>:8000`
+2. Environment variable: `SERVER_URL=http://<your-ip>:8000`
+3. Default: `http://localhost:8000`
+
+For LAN usage, set the environment variable:
+```bash
+# Windows PowerShell
+$env:SERVER_URL = "http://<your-local-ip>:8000"
+gradle run
+
+# Or with system property
+gradle run -Dorg.gradle.jvmargs="-Dserver.url=http://<your-local-ip>:8000"
+```
+
+**Important**: The Java client requires the FastAPI server to be running and accessible. For GitHub sharing, users can run the server on their own machine and configure the URL accordingly.
 ---
 ## Server API Endpoints
 | Endpoint             | Method | Description                                                |
@@ -92,10 +140,17 @@ java -cp bin core.Launcher
 
 ---
 ## Usage 
-1. Launch the application.
-2. Log in with your username and password.
-3. Send direct messages to a specific user or chat with everyone online.
-4. Online users are automatically tracked and displayed.
+1. Start the FastAPI server as described above.
+2. Configure the server URL if needed (see Build and Run section).
+3. Launch the Java application with `gradle run`.
+4. Log in with your username and password.
+5. Send direct messages to a specific user or chat with everyone online.
+6. Online users are automatically tracked and displayed.
+
+**For LAN/Shared Network Usage:**
+- Run the server with `--host 0.0.0.0`
+- Set `SERVER_URL` to the server's IP address (e.g., `http://192.168.1.100:8000`)
+- Multiple clients on the same network can connect and chat together
 ---
 ## License
 This project is licensed under the MIT License. See the LICENSE file for details.
