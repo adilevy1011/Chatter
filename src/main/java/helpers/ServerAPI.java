@@ -22,7 +22,19 @@ import java.net.URI;
 import Screens.*;
 public class ServerAPI {
     
-    public static final String SERVER_URL = "http://192.168.56.1:8000";
+    public static final String SERVER_URL = initServerUrl();
+
+    private static String initServerUrl() {
+        String url = System.getProperty("server.url");
+        if (url == null || url.isEmpty()) {
+            url = System.getenv("SERVER_URL");
+        }
+        if (url == null || url.isEmpty()) {
+            url = "http://localhost:8000";
+        }
+        System.out.println("ServerAPI using SERVER_URL=" + url);
+        return url;
+    }
     //Done
     public static void sendMessage(String username, String text) throws Exception {
         URI uri = new URI(SERVER_URL+"/sendMessage");

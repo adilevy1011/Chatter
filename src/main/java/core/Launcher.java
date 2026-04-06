@@ -6,7 +6,7 @@ public class Launcher {
     private static Screen currentScreen;
     public static void main(String[] args) throws Exception {
         //FireBaseInit.init();
-
+        //python -m uvicorn server:app --host 0.0.0.0 --port 8000 --reload
         setScreen(new MenuScreen("Chatter-Menu"));
     }
 

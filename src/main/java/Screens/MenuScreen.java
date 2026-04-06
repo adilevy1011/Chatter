@@ -62,6 +62,7 @@ public class MenuScreen extends Screen {
                         }));       
                     }
                 } catch(Exception ex){
+                    JOptionPane.showMessageDialog(null, "Failed to connect to server. Please ensure the FastAPI server is running on " + ServerAPI.SERVER_URL + ".");
                     ex.printStackTrace();
                 }
                 
