@@ -138,6 +138,9 @@ gradle run -Dorg.gradle.jvmargs="-Dserver.url=http://<your-local-ip>:8000"
 | `/newUser`           | POST   | Saves data for a new user                                  |
 | `/login`             | POST   | Logs in an existing user or creates a new one if not found |
 | `/onlineUsers`       | GET    | Retrieves a list of all online users (active within 30s)   |
+| `/UserDetails`       | GET    | Retrieves a list of all registered users                   |
+| `/conversations/{conversationID}/unreadCount`| GET | Retrieves the number of unread messages for a specific user in a conversation |
+| `/conversations/{conversationID}/messages/{messageID}/read` | PUT | Marks a specific direct message as read for the current user |
 
 ---
 ## Usage 
