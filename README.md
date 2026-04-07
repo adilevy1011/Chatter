@@ -146,8 +146,9 @@ gradle run -Dorg.gradle.jvmargs="-Dserver.url=http://<your-local-ip>:8000"
 3. Launch the Java application with `gradle run`.
 4. Log in with your username and password.
 5. Send direct messages to a specific user or chat with everyone online.
-6. Online users are automatically tracked and displayed.
-7. **To close the app properly**: Click the window's X button (not the VSCode stop button). This ensures the user is marked offline in Firebase.
+6. Unread messages are automatically tracked and displayed in each conversation.
+7. Online users are automatically tracked and displayed.
+8. **To close the app properly**: Click the window's X button (not the VSCode stop button). This ensures the user is marked offline in Firebase.
 
 **For LAN/Shared Network Usage:**
 - Run the server with `--host 0.0.0.0`
