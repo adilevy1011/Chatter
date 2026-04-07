@@ -67,6 +67,15 @@ public class DMScreen extends ChatScreen {
             }
         });
         messagesTimer.start();
+
+        Timer heartbeatTimer = new Timer(1000, e -> {
+            try {
+                ServerAPI.heartbeat(getUser().getUsername());
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+        });
+        heartbeatTimer.start();
             
     } 
     

@@ -8,6 +8,8 @@ import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.Timer;
 
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.util.ArrayList;
 import helpers.*;
 import core.*;
@@ -59,6 +61,7 @@ public class ChatScreen extends Screen{
         
         Timer timer = new Timer(1000, e -> {
             try {
+                ServerAPI.heartbeat(user.getUsername());
                 ArrayList<String> onlineUsers = ServerAPI.getOnlineUsers();
 
                 chatArea2.setText("");
@@ -123,6 +126,24 @@ public class ChatScreen extends Screen{
         catch (Exception ex)
         {
             ex.printStackTrace();
+        }
+        
+        // Register window listener to handle offline when closing
+        if (user != null) {
+            this.addWindowListener(new WindowAdapter() {
+                @Override
+                public void windowClosing(WindowEvent e) {
+                    try {
+                        ServerAPI.setUserOffline(user.getUsername());
+                        Thread.sleep(500);
+                        dispose();
+                        System.exit(0);
+                    } catch (Exception ex) {
+                        ex.printStackTrace();
+                        System.exit(0);
+                    }
+                }
+            });
         }
     }
     public void setUser(User user) {

@@ -52,18 +52,11 @@ public class MenuScreen extends Screen {
                         ChatScreen chatScreen = new ChatScreen("Chatter: " + newUser.getUsername()+ " -> All Users");
                         chatScreen.setUser(newUser);
                         Launcher.setScreen(chatScreen);          
-                        ServerAPI.setUserOnline(newUser.getUsername());       
-                        Runtime.getRuntime().addShutdownHook(new Thread(() -> {
-                            try {
-                                ServerAPI.setUserOffline(newUser.getUsername());
-                            } catch (Exception ex) {
-                                ex.printStackTrace();
-                            }
-                        }));       
+                        ServerAPI.setUserOnline(newUser.getUsername());
                     }
                 } catch(Exception ex){
-                    JOptionPane.showMessageDialog(null, "Failed to connect to server. Please ensure the FastAPI server is running on " + ServerAPI.SERVER_URL + ".");
                     ex.printStackTrace();
+                    JOptionPane.showMessageDialog(null, "Failed to connect to server. Please ensure the FastAPI server is running on " + ServerAPI.SERVER_URL + ".");
                 }
                 
                            
@@ -83,6 +76,14 @@ public class MenuScreen extends Screen {
         this.add(passwordField);
         
         this.add(button);
+        
+        // Add window listener for proper close handling
+        this.addWindowListener(new java.awt.event.WindowAdapter() {
+            @Override
+            public void windowClosing(java.awt.event.WindowEvent e) {
+                System.exit(0);
+            }
+        });
     }
     
 }

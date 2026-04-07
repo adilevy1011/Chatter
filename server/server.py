@@ -2,7 +2,7 @@ import firebase_admin
 from firebase_admin import credentials, db
 from fastapi import FastAPI
 import time
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 from fastapi.middleware.cors import CORSMiddleware
 import os
 from typing import List, Dict
@@ -26,7 +26,7 @@ firebase_admin.initialize_app(cred, {
 class Message(BaseModel):
     username: str
     text: str
-    timestamp: float = time.time()
+    timestamp: float = Field(default_factory=time.time)
 class Conversation(BaseModel):
     user1: str
     user2: str
@@ -75,9 +75,18 @@ def get_messages():
 
 @app.post("/setOnline")
 def set_online(username: str):
-    ref = db.reference("onlineUsers")
-    ref.child(username).set(True)
+    ref = db.reference("onlineUsers").child(username)
+    ref.set({
+        "online": True,
+        "lastSeen": time.time()
+    })
     return {"status": "online"}
+
+@app.post("/heartbeat")
+def heartbeat(username: str):
+    ref = db.reference("onlineUsers").child(username).child("lastSeen")
+    ref.set(time.time())
+    return {"status": "ok"}
 
 @app.post("/setOffline")
 def set_offline(username: str):
@@ -124,7 +133,12 @@ def online_users():
     ref = db.reference("onlineUsers")
     users = ref.get()
     if users:
-        return list(users.keys())
+        current_time = time.time()
+        online_users = []
+        for username, data in users.items():
+            if isinstance(data, dict) and data.get("lastSeen", 0) > current_time - 30:
+                online_users.append(username)
+        return online_users
     return []
 
 @app.get("/")

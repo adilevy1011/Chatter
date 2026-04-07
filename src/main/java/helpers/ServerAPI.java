@@ -17,6 +17,8 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URI;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 
 import Screens.*;
@@ -32,7 +34,6 @@ public class ServerAPI {
         if (url == null || url.isEmpty()) {
             url = "http://localhost:8000";
         }
-        System.out.println("ServerAPI using SERVER_URL=" + url);
         return url;
     }
     //Done
@@ -90,7 +91,7 @@ public class ServerAPI {
         List<Message> messages = gson.fromJson(response.toString(), new TypeToken<List<Message>>(){}.getType());
         chatArea.setText("");
         for (Message msg : messages) {
-            chatArea.append(msg.username + ": " + msg.text + "\n");
+            chatArea.append(formatTimestamp(msg.timestamp) + " " + msg.username + ": " + msg.text + "\n");
         }
         chatArea.setCaretPosition(chatArea.getDocument().getLength());
         chatArea.revalidate();
@@ -117,13 +118,30 @@ public class ServerAPI {
         List<Message> messages = gson.fromJson(response.toString(), new TypeToken<List<Message>>(){}.getType());
         chatArea.setText("");
         for (Message msg : messages) {
-            chatArea.append(msg.username + ": " + msg.text + "\n");
+            chatArea.append(formatTimestamp(msg.timestamp) + " " + msg.username + ": " + msg.text + "\n");
         }
         chatArea.setCaretPosition(chatArea.getDocument().getLength());
         chatArea.revalidate();
         chatArea.repaint();
         
 
+    }
+
+    private static String formatTimestamp(double timestamp) {
+        long timeMillis = (long) timestamp;
+        if (timeMillis < 1_000_000_000_000L) {
+            timeMillis *= 1000;
+        }
+        Date date = new Date(timeMillis);
+        SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm:ss");
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        String timePart = timeFormat.format(date);
+        String todayPart = dateFormat.format(new Date());
+        String messageDay = dateFormat.format(date);
+        if (todayPart.equals(messageDay)) {
+            return "[" + timePart + "]";
+        }
+        return "[" + messageDay + " " + timePart + "]";
     }
 
     public static void isOnline(String username, Consumer<Boolean> callback) {
@@ -230,18 +248,20 @@ public class ServerAPI {
         HttpURLConnection conn = (HttpURLConnection) uri.toURL().openConnection();
         conn.setRequestMethod("POST");
         conn.setRequestProperty("Content-Type", "application/json");
-
-        conn.getInputStream().close(); 
-
+        conn.getInputStream().close();
     }
 
     public static void setUserOffline(String username) throws Exception {
-
         URI uri = new URI(SERVER_URL+"/setOffline?username=" + URLEncoder.encode(username, "UTF-8"));
-
         HttpURLConnection conn = (HttpURLConnection) uri.toURL().openConnection();
         conn.setRequestMethod("POST");
+        conn.getInputStream().close();
+    }
 
+    public static void heartbeat(String username) throws Exception {
+        URI uri = new URI(SERVER_URL+"/heartbeat?username=" + URLEncoder.encode(username, "UTF-8"));
+        HttpURLConnection conn = (HttpURLConnection) uri.toURL().openConnection();
+        conn.setRequestMethod("POST");
         conn.getInputStream().close();
     }
 }

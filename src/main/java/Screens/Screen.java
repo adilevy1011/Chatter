@@ -6,7 +6,7 @@ public class Screen extends JFrame {
     public Screen(String title) {
         super(title);
         this.setSize(650,400);
-        this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        this.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
         this.setLayout(null); 
         
         
