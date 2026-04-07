@@ -25,30 +25,59 @@ firebase_admin.initialize_app(cred, {
 
 class Message(BaseModel):
     username: str
+    to: str = None  # for direct messages
+    readForUser1: bool = False
+    readForUser2: bool = False
     text: str
     timestamp: float = Field(default_factory=time.time)
+    messageID: str = Field(default_factory=lambda: os.urandom(16).hex())
 class Conversation(BaseModel):
     user1: str
     user2: str
     messages: List[Dict]  # or create a Message model
+
+@app.get("/messages")
+def get_messages():
+    ref = db.reference("messages")
+    messages = ref.get()
+    if messages:
+        return list(messages.values())
+    return []
+
 @app.post("/sendMessage")
 def send_message(msg: Message):
     ref = db.reference("messages")
     ref.push({
         "username": msg.username,
         "text": msg.text,
-        "timestamp": msg.timestamp
+        "timestamp": msg.timestamp,
+        "messageID": msg.messageID,   
+                   
     })
     return {"status": "sent"}
 
 @app.post("/sendDirectMessage")
-def send_direct_message(msg: Message, conversationID: str):
+def send_direct_message(msg: Message, sender: str, conversationID: str):
+
     ref = db.reference("conversations").child(conversationID)
-    ref.push({
-        "username": msg.username,
-        "text": msg.text,
-        "timestamp": msg.timestamp
-    })
+    if sender == conversationID.split("_")[0]: 
+        ref.push({
+            "username": msg.username,
+            "text": msg.text,
+            "readForUser1": True,
+            "readForUser2": msg.readForUser2, 
+            "timestamp": msg.timestamp,
+            "messageID": msg.messageID
+        })
+    elif sender == conversationID.split("_")[1]:
+        ref.push({
+            "username": msg.username,
+            "text": msg.text,    
+            "readForUser2": True,
+            "readForUser1": msg.readForUser1,
+            "timestamp": msg.timestamp,
+            "messageID": msg.messageID
+        })
     return {"status": "sent"}
 @app.get("/conversations", response_model=List[Conversation])
 def get_conversations():
@@ -65,13 +94,50 @@ def get_conversation(conversationID):
         return list(messages.values())  # return list instead of dict
     return []
 
-@app.get("/messages")
-def get_messages():
-    ref = db.reference("messages")
+
+
+@app.put("/conversations/{conversationID}/messages/{messageID}/read")
+def set_read(sender: str, conversationID: str, messageID: str):
+    ref = db.reference("conversations").child(conversationID)
     messages = ref.get()
-    if messages:
-        return list(messages.values())  # return list instead of dict
-    return []
+
+    if not messages:
+        return {"status": "not found"}
+
+    for key, msg in messages.items():
+        if msg.get("messageID") == messageID:
+
+            if sender == conversationID.split("_")[0]:
+                ref.child(key).update({"readForUser1": True})
+            elif sender == conversationID.split("_")[1]:
+                ref.child(key).update({"readForUser2": True})
+
+            return {"status": "updated"}
+
+    return {"status": "message not found"}
+
+@app.get("/conversations/{conversationID}/unreadCount")
+def get_unread_count(conversationID: str, user: str):
+    ref = db.reference("conversations").child(conversationID)
+    messages = ref.get()
+
+    if not messages:
+        return {"unreadCount": 0}
+
+    user1, user2 = conversationID.split("_")
+
+    if user == user1:
+        unread_count = sum(
+            1 for msg in messages.values()
+            if not msg.get("readForUser1", False)
+        )
+    else:
+        unread_count = sum(
+            1 for msg in messages.values()
+            if not msg.get("readForUser2", False)
+        )
+
+    return {"unreadCount": unread_count}
 
 @app.post("/setOnline")
 def set_online(username: str):
@@ -139,6 +205,14 @@ def online_users():
             if isinstance(data, dict) and data.get("lastSeen", 0) > current_time - 30:
                 online_users.append(username)
         return online_users
+    return []
+
+@app.get("/UserDetails")
+def get_all_users():
+    ref = db.reference("UserDetails")
+    users = ref.get()
+    if users:
+        return list(users.keys())
     return []
 
 @app.get("/")

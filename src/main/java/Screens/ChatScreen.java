@@ -27,14 +27,22 @@ public class ChatScreen extends Screen{
 
         JTextArea chatArea2 = new JTextArea();
         chatArea2.setEditable(false);
+
+        JTextArea chatArea3 = new JTextArea();
+        chatArea3.setEditable(false);
         JScrollPane scrollPane = new JScrollPane(chatArea);
-        scrollPane.setBounds(20,20,400,250);
+        scrollPane.setBounds(20,20,300,250);
 
         JScrollPane scrollPane2 = new JScrollPane(chatArea2);
-        scrollPane2.setBounds(420,20,200,250);
+        scrollPane2.setBounds(320,20,100,250);
+
+        JScrollPane scrollPane3 = new JScrollPane(chatArea3);
+        scrollPane3.setBounds(420,20,210,250);
 
         this.add(scrollPane);
         this.add(scrollPane2);
+        this.add(scrollPane3);
+
 
         JTextField textField = new JTextField("", 100);
         textField.setBounds(400, 300, 150, 45);
@@ -51,15 +59,18 @@ public class ChatScreen extends Screen{
         this.add(DMButton);
 
         
-        JLabel onlineUsersLabel = new JLabel("Online Users:");
-        onlineUsersLabel.setBounds(430, 0, 200, 20);
+        JLabel onlineUsersLabel = new JLabel("Online Users");
+        onlineUsersLabel.setBounds(320, 0, 100, 20);
         this.add(onlineUsersLabel);
+        JLabel unreadMessagesLabel = new JLabel("Private Messages:");
+        unreadMessagesLabel.setBounds(420, 0, 150, 20);
+        this.add(unreadMessagesLabel);
         JLabel AllMessagesLabel = new JLabel("All Messages:");
-        AllMessagesLabel.setBounds(30, 0, 200, 20);
+        AllMessagesLabel.setBounds(30, 0, 150, 20);
         this.add(AllMessagesLabel);
                 
         
-        Timer timer = new Timer(1000, e -> {
+        Timer OnlineUserstimer = new Timer(1000, e -> {
             try {
                 ServerAPI.heartbeat(user.getUsername());
                 ArrayList<String> onlineUsers = ServerAPI.getOnlineUsers();
@@ -80,7 +91,7 @@ public class ChatScreen extends Screen{
             }
         });
 
-        timer.start();
+        OnlineUserstimer.start();
         
         button.addActionListener(e -> {
             try {
@@ -101,6 +112,30 @@ public class ChatScreen extends Screen{
         });
         messagesTimer.start();
 
+        Timer privateMessagesTimer = new Timer(1000, e -> {
+            try {
+                ServerAPI.heartbeat(user.getUsername());
+                ArrayList<String> existingUsers = ServerAPI.getExistingUsers();
+
+                chatArea3.setText("");
+
+                if (existingUsers != null) {
+                    for(String username : existingUsers) {
+                        if(!username.equals(user.getUsername())) {
+                            int unreadCount = ServerAPI.getUnreadCount(DMScreen.getConversationId(user.getUsername(), username),this.getUser().getUsername());
+                            chatArea3.append(username + " (" + unreadCount + " unread)\n");
+                        }
+                    }
+                }
+
+                chatArea3.setCaretPosition(chatArea3.getDocument().getLength());
+                revalidate();
+
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+        });
+        privateMessagesTimer.start();
         DMButton.addActionListener(e -> {
             if(DMtextField.getText().isEmpty() || DMtextField.getText().equals("Type the username of the user you want to message...")) {
                 return;

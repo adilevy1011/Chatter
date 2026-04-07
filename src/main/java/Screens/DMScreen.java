@@ -2,6 +2,8 @@ package Screens;
 
 import core.Launcher;
 
+import java.util.ArrayList;
+
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JScrollPane;
@@ -13,11 +15,15 @@ import javax.swing.Timer;
 import helpers.*;
 
 public class DMScreen extends ChatScreen {
-    //private DatabaseReference ref;
+    
+    private String user1;
+    private String user2;
+    
+    
     public DMScreen(String title, String user1, String user2)  {
         super(title);    
-        //ref = FirebaseDatabase.getInstance().getReference("conversations").child(getConversationId(user1, user2));
-        
+        this.user1 = user1;
+        this.user2 = user2;
     }
 
     public void initFirebase() throws Exception {
@@ -39,7 +45,7 @@ public class DMScreen extends ChatScreen {
         this.add(backButton);
         this.add(button);
         this.add(textField);
-        JLabel MessagesLabel = new JLabel("Messages with " + this.getTitle().split("->")[1] + ":");
+        JLabel MessagesLabel = new JLabel("Messages with " + user2 + ":");
         MessagesLabel.setBounds(30, 0, 200, 20);
         this.add(MessagesLabel);
         
@@ -47,7 +53,7 @@ public class DMScreen extends ChatScreen {
             String text = textField.getText().trim();
             if(!text.isEmpty()) {
                 try {
-                     ServerAPI.sendDirectMessage(getUser().getUsername(), this.getTitle().split("->")[1].trim(), text);
+                     ServerAPI.sendDirectMessage(getUser().getUsername(), user2, text);
                      textField.setText("");
                 } catch (Exception ex) {
                     ex.printStackTrace();
@@ -61,7 +67,9 @@ public class DMScreen extends ChatScreen {
         });
         Timer messagesTimer = new Timer(1000, e -> {
             try {
-                ServerAPI.listenForMessages(chatArea, getConversationId(this.getUser().getUsername(), this.getTitle().split("->")[1].trim()));
+                ServerAPI.listenForMessages(chatArea, getConversationId(user1, user2),this.getUser().getUsername());
+                ServerAPI.setAllMessagesRead(getConversationId(user1, user2), this.getUser().getUsername());
+
             } catch (Exception ex) {
                 ex.printStackTrace();
             }

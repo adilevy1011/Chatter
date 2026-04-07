@@ -49,6 +49,10 @@ public class MenuScreen extends Screen {
                         JOptionPane.showMessageDialog(null, "Incorrect password, please try again.");
                     }
                     else {
+                        if(result.contains("\"status\":\"created\"")) {
+                            JOptionPane.showMessageDialog(null, "Congratulations! Your account has been created.");
+                        }
+
                         ChatScreen chatScreen = new ChatScreen("Chatter: " + newUser.getUsername()+ " -> All Users");
                         chatScreen.setUser(newUser);
                         Launcher.setScreen(chatScreen);          
