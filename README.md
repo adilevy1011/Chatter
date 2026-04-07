@@ -14,13 +14,12 @@ Chatter is a desktop chat application built with **Java Swing** and **Firebase R
 - Automatic user registration if username doesn't exist
 - Direct messaging between users
 - Group chat with all online users
-- Online/offline user tracking via FastAPI server
+- Online/offline user tracking via FastAPI server with heartbeat system (users marked offline immediately on app close, or after 30 seconds of inactivity)
 - Server API integration (`ServerAPI.java`) for all network communication
 
 ### ⚡ Planned Features
 - File sharing
 - Message notifications
-- Heartbeat system to automatically remove inactive users
 - Public server deployment for internet-wide access
 
 ---
@@ -133,10 +132,11 @@ gradle run -Dorg.gradle.jvmargs="-Dserver.url=http://<your-local-ip>:8000"
 | `/conversation`      | GET    | Retrieve a specified direct message conversation           |
 | `/messages`          | GET    | Retrieves all public messages                              |
 | `/setOnline`         | POST   | Marks a user as online                                     |
+| `/heartbeat`         | POST   | Updates user's last seen timestamp for online tracking     |
 | `/setOffline`        | POST   | Marks a user as offline                                    |
-| `/newUser`           | POST   | Saves data for a new user
+| `/newUser`           | POST   | Saves data for a new user                                  |
 | `/login`             | POST   | Logs in an existing user or creates a new one if not found |
-| `/onlineUsers`       | GET    | Retrieves a list of all online users                       |
+| `/onlineUsers`       | GET    | Retrieves a list of all online users (active within 30s)   |
 
 ---
 ## Usage 
@@ -146,6 +146,7 @@ gradle run -Dorg.gradle.jvmargs="-Dserver.url=http://<your-local-ip>:8000"
 4. Log in with your username and password.
 5. Send direct messages to a specific user or chat with everyone online.
 6. Online users are automatically tracked and displayed.
+7. **To close the app properly**: Click the window's X button (not the VSCode stop button). This ensures the user is marked offline in Firebase.
 
 **For LAN/Shared Network Usage:**
 - Run the server with `--host 0.0.0.0`
