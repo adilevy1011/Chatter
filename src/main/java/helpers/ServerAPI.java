@@ -105,7 +105,6 @@ public class ServerAPI {
     }
     //Done
     public static void listenForMessages(JTextArea chatArea, String conversationId, String currentUser) throws Exception {
-
         URI uri = new URI(SERVER_URL+"/conversation?conversationID=" + conversationId);
         HttpURLConnection conn = (HttpURLConnection) uri.toURL().openConnection();
         conn.setRequestMethod("GET");
@@ -121,17 +120,6 @@ public class ServerAPI {
         Gson gson = new Gson();
 
         List<Message> messages = gson.fromJson(response.toString(), new TypeToken<List<Message>>(){}.getType());
-        for (Message msg : messages) {
-            if(!msg.username.equals(currentUser)){
-                String user1 = conversationId.split("_")[0];
-                boolean isUser1 = currentUser.equals(user1);
-
-                if ((isUser1 && !msg.readForUser1) || (!isUser1 && !msg.readForUser2)) {
-                    setMessageRead(conversationId, msg.messageID, currentUser);
-                }
-            }
-            
-        }
 
         chatArea.setText("");
         for (Message msg : messages) {
@@ -140,8 +128,6 @@ public class ServerAPI {
         chatArea.setCaretPosition(chatArea.getDocument().getLength());
         chatArea.revalidate();
         chatArea.repaint();
-        
-
     }
 
     private static String formatTimestamp(double timestamp) {

@@ -66,7 +66,6 @@ public class DMScreen extends ChatScreen {
         Timer messagesTimer = new Timer(1000, e -> {
             try {
                 ServerAPI.listenForMessages(chatArea, getConversationId(user1, user2),this.getUser().getUsername());
-                ServerAPI.setAllMessagesRead(getConversationId(user1, user2), this.getUser().getUsername());
                 ServerAPI.heartbeat(getUser().getUsername());
             } catch (Exception ex) {
                 ex.printStackTrace();
@@ -74,7 +73,8 @@ public class DMScreen extends ChatScreen {
         });
         messagesTimer.start();
 
-        
+        ServerAPI.setAllMessagesRead(getConversationId(user1, user2), this.getUser().getUsername());
+
             
     } 
     
