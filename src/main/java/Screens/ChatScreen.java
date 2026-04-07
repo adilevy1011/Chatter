@@ -3,6 +3,7 @@ package Screens;
 
 import javax.swing.JButton;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
@@ -46,7 +47,7 @@ public class ChatScreen extends Screen{
 
         JTextField textField = new JTextField("", 100);
         textField.setBounds(400, 300, 150, 45);
-        JTextField DMtextField = new JTextField("Type the username of the user you want to message...", 150);
+        JTextField DMtextField = new JTextField("", 150);
         DMtextField.setBounds(100, 300, 290, 45);
         JButton button = new JButton("Send");
         button.setBounds(550, 300, 80, 45);
@@ -68,7 +69,10 @@ public class ChatScreen extends Screen{
         JLabel AllMessagesLabel = new JLabel("All Messages:");
         AllMessagesLabel.setBounds(30, 0, 150, 20);
         this.add(AllMessagesLabel);
-                
+        
+        JLabel typeUserToDmLabel = new JLabel("Type the username of the user you want to message:");
+        typeUserToDmLabel.setBounds(20, 280, 300, 20);
+        this.add(typeUserToDmLabel);
         
         Timer OnlineUserstimer = new Timer(1000, e -> {
             try {
@@ -106,14 +110,6 @@ public class ChatScreen extends Screen{
         Timer messagesTimer = new Timer(1000, e -> {
             try {
                 ServerAPI.listenForMessages(chatArea);
-            } catch (Exception ex) {
-                ex.printStackTrace();
-            }
-        });
-        messagesTimer.start();
-
-        Timer privateMessagesTimer = new Timer(1000, e -> {
-            try {
                 ServerAPI.heartbeat(user.getUsername());
                 ArrayList<String> existingUsers = ServerAPI.getExistingUsers();
 
@@ -135,23 +131,29 @@ public class ChatScreen extends Screen{
                 ex.printStackTrace();
             }
         });
-        privateMessagesTimer.start();
+        messagesTimer.start();
+
+        
         DMButton.addActionListener(e -> {
-            if(DMtextField.getText().isEmpty() || DMtextField.getText().equals("Type the username of the user you want to message...")) {
+            if(DMtextField.getText().isEmpty()) {
+                JOptionPane.showMessageDialog(this, "Please enter a username to DM.", "Error", JOptionPane.ERROR_MESSAGE);
                 return;
             } else if(DMtextField.getText().equals(this.user.getUsername())) {
                 DMtextField.setText("");
                 return;
             } else {
-                ServerAPI.isOnline(DMtextField.getText(), (isOnline) -> {
-                    if (isOnline) {
-                        DMScreen dmScreen = new DMScreen("Chatter: " + user.getUsername() + "->" + DMtextField.getText(), this.user.getUsername(), DMtextField.getText());
-                        dmScreen.setUser(this.user);
-                        Launcher.setScreen(dmScreen);
+                try{
+                    if (ServerAPI.checkUserExists(DMtextField.getText())) {
+                    DMScreen dmScreen = new DMScreen("Chatter: " + user.getUsername() + "->" + DMtextField.getText(), this.user.getUsername(), DMtextField.getText());
+                    dmScreen.setUser(this.user);
+                    Launcher.setScreen(dmScreen);
                     } else {
-                        DMtextField.setText("User is not online.");
+                        JOptionPane.showMessageDialog(this, "User not found.", "Error", JOptionPane.ERROR_MESSAGE);
+                        DMtextField.setText("");
                     }
-                });
+                }catch(Exception ex) {
+                    ex.printStackTrace();
+                }
             }
         });
         try

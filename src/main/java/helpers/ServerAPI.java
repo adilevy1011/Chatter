@@ -383,20 +383,40 @@ public class ServerAPI {
         conn.getInputStream().close();
     }
 
-    // public static boolean checkUserExists(String username) throws Exception {
-    //     URI uri = new URI(SERVER_URL+"/userExists?username=" + URLEncoder.encode(username, "UTF-8"));
-    //     HttpURLConnection conn = (HttpURLConnection) uri.toURL().openConnection();
-    //     conn.setRequestMethod("GET");
+    public static boolean checkUserExists(String username) throws Exception {
+        
+        // Build URI
+        URI uri = new URI(SERVER_URL + "/UserDetails");
+        HttpURLConnection conn = (HttpURLConnection) uri.toURL().openConnection();
+        conn.setRequestMethod("GET");
+        conn.setRequestProperty("Content-Type", "application/json");
 
-    //     BufferedReader reader = new BufferedReader(
-    //             new InputStreamReader(conn.getInputStream())
-    //     );
+        // Read response
+        BufferedReader reader = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+        StringBuilder response = new StringBuilder();
+        String line;
+        while ((line = reader.readLine()) != null) {
+            response.append(line);
+        }
+        reader.close();
 
-    //     String response = reader.readLine();
-    //     reader.close();
+        // Clean and parse JSON array
+        String resp = response.toString().trim();
+        if (resp.startsWith("[") && resp.endsWith("]")) {
+            resp = resp.substring(1, resp.length() - 1); // remove [ and ]
+            if (!resp.isEmpty()) {
+                String[] users = resp.split(",");
+                for (String user : users) {
+                    // Remove quotes and whitespace
+                    if (user.trim().replaceAll("\"", "").equals(username)) {
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
 
-    //     return Boolean.parseBoolean(response);
-    // }
+    }
 
     public static void heartbeat(String username) throws Exception {
         URI uri = new URI(SERVER_URL+"/heartbeat?username=" + URLEncoder.encode(username, "UTF-8"));

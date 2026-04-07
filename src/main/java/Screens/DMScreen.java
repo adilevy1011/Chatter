@@ -2,8 +2,6 @@ package Screens;
 
 import core.Launcher;
 
-import java.util.ArrayList;
-
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JScrollPane;
@@ -69,21 +67,14 @@ public class DMScreen extends ChatScreen {
             try {
                 ServerAPI.listenForMessages(chatArea, getConversationId(user1, user2),this.getUser().getUsername());
                 ServerAPI.setAllMessagesRead(getConversationId(user1, user2), this.getUser().getUsername());
-
+                ServerAPI.heartbeat(getUser().getUsername());
             } catch (Exception ex) {
                 ex.printStackTrace();
             }
         });
         messagesTimer.start();
 
-        Timer heartbeatTimer = new Timer(1000, e -> {
-            try {
-                ServerAPI.heartbeat(getUser().getUsername());
-            } catch (Exception ex) {
-                ex.printStackTrace();
-            }
-        });
-        heartbeatTimer.start();
+        
             
     } 
     
