@@ -15,6 +15,7 @@ Chatter is a desktop chat application built with **Java Swing** and **Firebase R
 - Direct messaging between users
 - Group chat with all online users
 - Online/offline user tracking via FastAPI server with heartbeat system (users marked offline immediately on app close, or after 30 seconds of inactivity)
+- Unread messages indicator
 - Server API integration (`ServerAPI.java`) for all network communication
 
 ### ⚡ Planned Features
