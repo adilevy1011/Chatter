@@ -53,7 +53,7 @@ public class MenuScreen extends Screen {
                             JOptionPane.showMessageDialog(null, "Congratulations! Your account has been created.");
                         }
 
-                        ChatScreen chatScreen = new ChatScreen("Chatter: " + newUser.getUsername()+ " -> All Users");
+                        ChatScreen chatScreen = new ChatScreen("Chatter: " + newUser.getUsername()+ " | Main Page");
                         chatScreen.setUser(newUser);
                         Launcher.setScreen(chatScreen);          
                         ServerAPI.setUserOnline(newUser.getUsername());
