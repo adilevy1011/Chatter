@@ -24,7 +24,7 @@ public class DMScreen extends ChatScreen {
         this.user2 = user2;
     }
 
-    public void initFirebase() throws Exception {
+    public void initScreen() throws Exception {
         JTextArea chatArea = new JTextArea();
         chatArea.setEditable(false);
 
@@ -78,7 +78,12 @@ public class DMScreen extends ChatScreen {
             
     } 
     
-
+    /**
+     * getConversationId is a method that generates a unique conversation ID for a direct message conversation between two users by comparing their usernames and concatenating them in a consistent order (alphabetically) to ensure that the same conversation ID is generated regardless of the order of the users.
+     * @param user1 the username of the first user in the direct message conversation
+     * @param user2 the username of the second user in the direct message conversation
+     * @return a String representing the unique conversation ID for the direct message conversation between the two users, formatted as "user1_user2" or "user2_user1" depending on the alphabetical order of the usernames
+     */
     public static String getConversationId(String user1, String user2) {
         if(user1.compareTo(user2) < 0)
             return user1 + "_" + user2;

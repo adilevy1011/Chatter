@@ -21,7 +21,7 @@ public class ChatScreen extends Screen{
         super(title);
         
     }
-    public void initFirebase() throws Exception{
+    public void initScreen() throws Exception{
 
         JTextArea chatArea = new JTextArea();
         chatArea.setEditable(false);
@@ -183,9 +183,17 @@ public class ChatScreen extends Screen{
             });
         }
     }
+    /**
+     * setUser is a method that assigns the provided User object to the user field of the ChatScreen class, allowing the screen to have access to the user's information and perform actions based on that user context.
+     * @param user the User object to be assigned to the user field
+     */
     public void setUser(User user) {
         this.user = user;
     }
+    /**
+     * getUser is a method that returns the User object associated with the ChatScreen, allowing other parts of the application to access the user's information and perform actions based on that user context.
+     * @return the User object associated with the ChatScreen
+     */
     public User getUser() {
         return this.user;
     }

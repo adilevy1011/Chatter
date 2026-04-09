@@ -15,7 +15,7 @@ public class MenuScreen extends Screen {
     public MenuScreen(String title) {
         super(title);
     }    
-    public void initFirebase() throws Exception{
+    public void initScreen() throws Exception{
         JLabel welcomeLabel = new JLabel("Welcome to Chatter!");
         welcomeLabel.setBounds(10, 10, 200, 30);
 
